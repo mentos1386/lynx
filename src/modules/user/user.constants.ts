@@ -1,0 +1,6 @@
+export const USER_REPOSITORY_TOKEN = 'USER_REPOSITORY_TOKEN';
+
+export enum USER_ROLE {
+  DEFAULT = 'DEFAULT',
+  ADMIN = 'ADMIN',
+}

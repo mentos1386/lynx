@@ -1,5 +1,5 @@
 import { Connection, Repository } from 'typeorm';
-import { DB_CONNECTION_TOKEN } from '../core/database/database.constants';
+import { DB_CONNECTION_TOKEN } from '../database/database.constants';
 import { FILE_REPOSITORY_TOKEN } from './file.constants';
 import { FileRepository } from './file.repository';
 

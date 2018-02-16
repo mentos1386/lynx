@@ -14,7 +14,7 @@ export class ValidatorPipe implements PipeTransform<any> {
     const object = plainToClass(metatype, value);
     const errors = await validate(object, { skipMissingProperties: true, whitelist: true });
     if (errors.length > 0) {
-      let errorMessages = this.extractErrorMessages(errors);
+      const errorMessages = this.extractErrorMessages(errors);
       throw new ValidationException(errorMessages);
     }
 
@@ -23,9 +23,11 @@ export class ValidatorPipe implements PipeTransform<any> {
 
   private extractErrorMessages(errors) {
     let r = [];
-    errors.forEach(err => {
+    errors.forEach((err) => {
       if (err.constraints)
-        Object.keys(err.constraints).forEach(key => r.push(err.constraints[key]));
+        Object.keys(err.constraints)
+        .forEach(key => r.push(err.constraints[key]));
+
       r = r.concat(this.extractErrorMessages(err.children));
     });
     return r;
@@ -33,6 +35,6 @@ export class ValidatorPipe implements PipeTransform<any> {
 
   private toValidate(metatype: any = null): boolean {
     const types = [String, Boolean, Number, Array, Object];
-    return !types.find((type) => metatype === type);
+    return !types.find(type => metatype === type);
   }
 }

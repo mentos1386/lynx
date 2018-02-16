@@ -11,7 +11,6 @@ export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {
   }
 
-  // noinspection JSUnusedGlobalSymbols
   async canActivate(req, context: ExecutionContext): Promise<boolean> {
     let roles = this.reflector.get<string[]>('roles', context.handler);
     if (!roles) {

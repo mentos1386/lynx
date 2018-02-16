@@ -1,4 +1,4 @@
 {
   "language": "ts",
-  "entryFile": "src/api.ts"
+  "entryFile": "src/server.ts"
 }

@@ -18,7 +18,6 @@ async function bootstrap(): Promise<void> {
 
   const nestApp = await NestFactory.create(ApplicationModule, instance);
   nestApp.useGlobalInterceptors(new ResponseInterceptor());
-  nestApp.setGlobalPrefix('api');
   nestApp.useGlobalFilters(new RequestExceptionFilter(), new DefaultExceptionFilter());
   nestApp.useGlobalPipes(new ValidatorPipe());
   nestApp.useGlobalGuards(new RolesGuard(new Reflector()));

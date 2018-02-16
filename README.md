@@ -23,7 +23,7 @@ $ npm run start
 
 Production environment:
 ```
-$ npm run prestart:prod
+$ npm run build
 $ node dist/src/api.ts
 ```
 
@@ -51,4 +51,4 @@ Then run Mocha testing framework:
 ```
 $ mocha test/*.spec.ts
 ```
-Before hooks in `test/` directory will clean test database, initialize sequelize and seed fake data. 
+Before hooks in `e2e/` directory will clean test database, initialize sequelize and seed fake data.

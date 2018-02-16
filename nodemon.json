@@ -7,5 +7,5 @@
     "src/**/*.spec.ts",
     "src/**/*.migrate.ts"
   ],
-  "exec": "ts-node ./src/api.ts"
+  "exec": "ts-node ./src/server.ts"
 }

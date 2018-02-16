@@ -10,11 +10,10 @@
   "scripts": {
     "start": "nodemon",
     "start:test": "cross-env NODE_ENV=test nodemon",
-    "prestart:prod": "tsc",
-    "clean": "ts-node db/clean.ts",
+    "build": "tsc",
     "lint": "tslint --project .",
-    "test": "mocha src/*.spec.ts",
-    "test:e2e": "mocha test/*.spec.ts",
+    "test:unit": "mocha src/*.spec.ts",
+    "test:e2e": "mocha e2e/*.spec.ts",
     "seed": "ts-node db/seed.ts"
   },
   "dependencies": {

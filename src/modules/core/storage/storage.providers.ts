@@ -1,12 +1,12 @@
 import { Connection, Repository } from 'typeorm';
 import { DB_CONNECTION_TOKEN } from '../database/database.constants';
-import { FILE_REPOSITORY_TOKEN } from './file.constants';
-import { FileRepository } from './file.repository';
+import { STORAGE_REPOSITORY_TOKEN } from './storage.constants';
+import { StorageRepository } from './storage.repository';
 
-export const fileProviders = [
+export const storageRepositoryProviders = [
   {
-    provide: FILE_REPOSITORY_TOKEN,
-    useFactory: (connection: Connection) => connection.getCustomRepository(FileRepository),
+    provide: STORAGE_REPOSITORY_TOKEN,
+    useFactory: (connection: Connection) => connection.getCustomRepository(StorageRepository),
     inject: [DB_CONNECTION_TOKEN],
   },
 ];

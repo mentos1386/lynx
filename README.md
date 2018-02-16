@@ -2,9 +2,18 @@
 
 ## Built with
 
-- [Nest.js](http://nestjs.com/) for Angular-like structure and dependency injection
-- [TypeORM](http://typeorm.io/) for ORM with database
-- [class-validator](https://github.com/pleerock/class-validator) for input validation
+ Component |                  Description                    | Note
+---------- | ----------------------------------------------- | ---
+Base       | [NestJS](https://nestjs.com)                    |
+Database   | [TypeORM](http://typeorm.io/)                   |
+Logger     | [Winston](https://github.com/winstonjs/winston) |
+Error Reporting| [Sentry](https://sentry.io/welcome/)        |
+Validation | [Class-Validator](https://github.com/typestack/class-validator)|
+Documentation| [Swagger](https://swagger.io)                 |
+Configuration| [Dotenv](https://github.com/motdotla/dotenv)  |
+Authentication| [Passport.js](http://www.passportjs.org)     |
+Testing    | [Mocha](https://mochajs.org) & [Chai](http://chaijs.com)|
+Code Style | [Airbnb](https://github.com/airbnb/javascript) & [TS-Lint](https://palantir.github.io/tslint/)|
 
 ## Usage
 

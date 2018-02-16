@@ -1,16 +1,16 @@
 import { Repository } from 'typeorm';
-import { File } from './file.entity';
+import { StorageEntity } from './storage.entity';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
-@EntityRepository(File)
-export class FileRepository extends Repository<File> {
+@EntityRepository(StorageEntity)
+export class StorageRepository extends Repository<StorageEntity> {
 
   /**
-   * Find File by url
+   * Find StorageEntity by url
    * @param {string} url
-   * @returns {Promise<File>}
+   * @returns {Promise<StorageEntity>}
    */
-  public findOneByUrl(url: string): Promise<File> {
+  public findOneByUrl(url: string): Promise<StorageEntity> {
     return this.createQueryBuilder('file')
     .where('url = :url', { url })
     .getOne();

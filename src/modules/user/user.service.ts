@@ -9,9 +9,8 @@ import {
   VRegister,
   VUserQuery,
 } from './user.validations';
-import { FileService } from '../file/file.service';
 import { User } from './user.entity';
-import { File } from '../file/file.entity';
+import { StorageEntity } from '../core/storage/storage.entity';
 import * as _ from 'lodash';
 import { EmailExistsException } from './exceptions/emailExists.exception';
 import { InvalidLoginCredentialsException } from './exceptions/invalidLoginCredentials.exception';
@@ -25,6 +24,7 @@ import { UserRepository } from './user.repository';
 import { AuthenticationService } from '../core/authentication/authentication.service';
 import { CryptoService } from '../core/crypto/crypto.service';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
+import { StorageService } from '../core/storage/storage.service';
 
 @Component()
 export class UserService {
@@ -36,7 +36,7 @@ export class UserService {
     private googleOauthService: OAuthGoogleService,
     private facebookOauthService: OAuthFacebookService,
     private emailService: EmailService,
-    private fileService: FileService,
+    private storageService: StorageService,
     private authenticationService: AuthenticationService,
     private cryptoService: CryptoService,
   ) {
@@ -365,10 +365,10 @@ export class UserService {
   /**
    * Change profile image
    * @param {User} user
-   * @param {File} file
+   * @param {StorageEntity} file
    * @returns {Promise<User>}
    */
-  public async changeProfileImage(user: User, file: File): Promise<User> {
+  public async changeProfileImage(user: User, file: StorageEntity): Promise<User> {
     const oldImage = user.profileImage;
     user.profileImage = await this.makeProfileImage(file);
 
@@ -383,10 +383,10 @@ export class UserService {
 
   /**
    * Create profile image from file
-   * @param {File} original
-   * @returns {Promise<File>}
+   * @param {StorageEntity} original
+   * @returns {Promise<StorageEntity>}
    */
-  public async makeProfileImage(original: File): Promise<File> {
+  public async makeProfileImage(original: StorageEntity): Promise<StorageEntity> {
     const image = await this.fileService.resize(original, 256, 256, true);
     this.fileService.clearCache();
     // Remove original file

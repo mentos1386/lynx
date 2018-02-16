@@ -1,4 +1,4 @@
-import { File } from '../file/file.entity';
+import { StorageEntity } from '../core/storage/storage.entity';
 import {
   Column, CreateDateColumn, OneToOne, PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -24,8 +24,8 @@ export class User {
   @Column()
   password: string;
 
-  @OneToOne(() => File, { eager: true })
-  profileImage: File;
+  @OneToOne(() => StorageEntity, { eager: true })
+  profileImage: StorageEntity;
 
   @Column({ default: USER_ROLE.DEFAULT, type: 'enum', enum: USER_ROLE })
   role: USER_ROLE;

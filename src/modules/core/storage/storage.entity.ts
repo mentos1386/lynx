@@ -1,8 +1,9 @@
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm/decorator/entity/Entity';
+import { STORAGE_TYPE } from './storage.constants';
 
 @Entity()
-export class File {
+export class StorageEntity {
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,6 +17,6 @@ export class File {
   @Column()
   mimetype: string;
 
-  @Column()
-  path: string;
+  @Column({ type: 'enum', enum: STORAGE_TYPE })
+  storageType: STORAGE_TYPE;
 }

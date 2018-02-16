@@ -1,11 +1,11 @@
 import { Component, Inject } from '@nestjs/common';
-import { STORAGE_REPOSITORY_TOKEN } from './storage.constants';
+import { STORAGE_REPOSITORY_TOKEN, STORAGE_TYPE } from './storage.constants';
 import { NotFoundException } from '../../../exceptions/notFoundException';
 import { StorageRepository } from './storage.repository';
 import { StorageEntity } from './storage.entity';
 
 @Component()
-export abstract class StorageService {
+export class StorageService {
 
   constructor(
     @Inject(STORAGE_REPOSITORY_TOKEN) private storageRepository: StorageRepository,
@@ -23,14 +23,28 @@ export abstract class StorageService {
 
   /**
    * Save file
-   * @param {Express.Multer.File} file
-   * @returns {Promise<File>}
+   * @param {Express.MulterS3.File} file
+   * @param storageType
+   * @returns {Promise<StorageEntity>}
    */
-  public async save(file: Express.Multer.File): Promise<StorageEntity> {
+  public async save(
+    file: Express.MulterS3.File, // Should be `| Express.Multer.File` but it doesn't work
+    storageType: STORAGE_TYPE,
+  ): Promise<StorageEntity> {
     const entity = new StorageEntity();
-    entity.path = file.path;
     entity.mimetype = file.mimetype;
     entity.size = file.size;
+    entity.storageType = storageType;
+
+    // Depending on storage type used, we have to set proper url
+    switch (storageType) {
+      case STORAGE_TYPE.AWS_S3:
+        entity.url = file.location;
+        break;
+      case STORAGE_TYPE.DISK:
+        entity.url = file.path;
+        break;
+    }
 
     return await this.storageRepository.save(entity);
   }

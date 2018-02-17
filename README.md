@@ -1,10 +1,10 @@
 # Lynx Framework
 
 ## Built with
-_**Bold** are required files_
+_**Bold** are required components (not easy to replace)_
 
- Component |                  Description                    | Note
----------- | ----------------------------------------------- | ---
+ Component |                      Using                      | Descrption
+---------- | ----------------------------------------------- | ----------
 **Base**   | [NestJS](https://nestjs.com)                    |
 **Database**| [TypeORM](http://typeorm.io/)                   |
 **File Upload**| [Multer](https://github.com/expressjs/multer)   |
@@ -16,6 +16,18 @@ Configuration| [Dotenv](https://github.com/motdotla/dotenv)  |
 Authentication| [Passport.js](http://www.passportjs.org)     |
 Testing    | [Mocha](https://mochajs.org) & [Chai](http://chaijs.com)|
 Code Style | [Airbnb](https://github.com/airbnb/javascript) & [TS-Lint](https://palantir.github.io/tslint/)|
+
+## Progress
+
+ - [ ] File Upload (disk, s3, memory)
+ - [ ] Authentication (JWT, OAuth)
+ - [ ] Logger
+ - [ ] Request Context
+ - [ ] Error Reporting
+ - [ ] Database Migrations
+ - [ ] Database Seeding
+ - [ ] Testing (e2e, unit)
+
 ## Usage
 
 ### Install

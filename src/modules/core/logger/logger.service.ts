@@ -1,22 +1,10 @@
-import { Logger, LoggerInstance, transports } from 'winston';
+import { LoggerInstance } from 'winston';
+import { Inject } from '@nestjs/common';
+import { LOGGER_WINSTON_PROVIDER } from './logger.constants';
 
 export class LoggerService {
 
-  private readonly LOG_LEVEL = process.env.LOG_LEVEL;
-  private readonly transports = [
-    new transports.Console({
-      colorize: true,
-      align: true,
-    }),
-  ];
-
-  private winston: LoggerInstance;
-
-  constructor() {
-    this.winston = new Logger({
-      level: this.LOG_LEVEL,
-      transports: this.transports,
-    });
+  constructor(@Inject(LOGGER_WINSTON_PROVIDER) private winston: LoggerInstance) {
   }
 
   public debug(msg: string, ...meta): void {

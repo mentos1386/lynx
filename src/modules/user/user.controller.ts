@@ -1,5 +1,5 @@
 import {
-  Body, Controller, Delete, FileInterceptor, Get, Inject, Post, Put, Req, UploadedFile,
+  Body, Controller, Delete, Get, Inject, Post, Put, Req, UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -13,6 +13,7 @@ import { STORAGE_S3_PROVIDER } from '../core/storage/s3/s3.constants';
 import { StorageEngine } from 'multer';
 import { StorageService } from '../core/storage/storage.service';
 import { STORAGE_TYPE } from '../core/storage/storage.constants';
+import { mixinStorageInterceptor } from '../core/storage/storage.interceptor.mixin';
 
 @Controller()
 @Roles(USER_ROLE.DEFAULT, USER_ROLE.ADMIN)
@@ -60,7 +61,7 @@ export class UserUserController {
   }
 
   @Post('/image')
-  @UseInterceptors(FileInterceptor('image', { storage: this.s3StorageProvider }))
+  @UseInterceptors(mixinStorageInterceptor(() => 'file', () => STORAGE_TYPE.AWS_S3))
   public async changeProfileImage(
     @Req() req: IRequest,
     @UploadedFile() image: Express.MulterS3.File,

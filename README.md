@@ -1,11 +1,13 @@
 # Lynx Framework
 
 ## Built with
+_**Bold** are required files_
 
  Component |                  Description                    | Note
 ---------- | ----------------------------------------------- | ---
-Base       | [NestJS](https://nestjs.com)                    |
-Database   | [TypeORM](http://typeorm.io/)                   |
+**Base**   | [NestJS](https://nestjs.com)                    |
+**Database**| [TypeORM](http://typeorm.io/)                   |
+**File Upload**| [Multer](https://github.com/expressjs/multer)   |
 Logger     | [Winston](https://github.com/winstonjs/winston) |
 Error Reporting| [Sentry](https://sentry.io/welcome/)        |
 Validation | [Class-Validator](https://github.com/typestack/class-validator)|
@@ -14,7 +16,6 @@ Configuration| [Dotenv](https://github.com/motdotla/dotenv)  |
 Authentication| [Passport.js](http://www.passportjs.org)     |
 Testing    | [Mocha](https://mochajs.org) & [Chai](http://chaijs.com)|
 Code Style | [Airbnb](https://github.com/airbnb/javascript) & [TS-Lint](https://palantir.github.io/tslint/)|
-
 ## Usage
 
 ### Install

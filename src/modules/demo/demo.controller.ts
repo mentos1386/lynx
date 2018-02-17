@@ -24,11 +24,11 @@ export class DemoController {
   @UseInterceptors(FileInterceptor('file', { storage: this.diskStorageProvider }))
   public async upload(
     @Req() req: IRequest,
-    @UploadedFile() file: Express.MulterS3.File,
-  ): Promise<StorageEntity> {
-    console.log(this.diskStorageProvider);
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    // file should have path/destination property if is written
     console.log('file uploaded', file);
-    return await this.storageService.save(file, STORAGE_TYPE.DISK);
+    return file;
   }
 
 }

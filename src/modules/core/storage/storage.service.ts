@@ -3,12 +3,16 @@ import { STORAGE_REPOSITORY_TOKEN, STORAGE_TYPE } from './storage.constants';
 import { NotFoundException } from '../../../exceptions/notFoundException';
 import { StorageRepository } from './storage.repository';
 import { StorageEntity } from './storage.entity';
+import { StorageS3Service } from './s3/s3.service';
+import { StorageDiskService } from './disk/disk.service';
 
 @Component()
 export class StorageService {
 
   constructor(
     @Inject(STORAGE_REPOSITORY_TOKEN) private storageRepository: StorageRepository,
+    private storageS3Service: StorageS3Service,
+    private storageDiskService: StorageDiskService,
   ) {
   }
 
@@ -18,6 +22,17 @@ export class StorageService {
    * @returns {Promise<any>}
    */
   public async remove(entity: StorageEntity): Promise<void> {
+
+    // Remove file from storage
+    switch (entity.storageType) {
+      case STORAGE_TYPE.AWS_S3:
+        await this.storageS3Service.destroy(entity);
+        break;
+      case STORAGE_TYPE.DISK:
+        await this.storageDiskService.destroy(entity);
+        break;
+    }
+
     await this.storageRepository.delete(entity);
   }
 
@@ -40,9 +55,11 @@ export class StorageService {
     switch (storageType) {
       case STORAGE_TYPE.AWS_S3:
         entity.url = file.location;
+        entity.key = file.key;
         break;
       case STORAGE_TYPE.DISK:
         entity.url = file.path;
+        entity.key = file.path;
         break;
     }
 

@@ -1,4 +1,7 @@
-import { Body, Controller, Get, Headers, Post, Put, Query } from '@nestjs/common';
+import {
+  Body, Controller, Get, Headers, Post, Put, Query, UseInterceptors, FileInterceptor,
+  Req, UploadedFile, Inject,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import {
   VLoginCredentials,
@@ -9,6 +12,13 @@ import {
 } from './user.validations';
 import { DAuthenticatedUser, DUserProfile } from './user.dto';
 import { AuthenticationService } from '../core/authentication/authentication.service';
+import { IRequest } from '../../interfaces/request.interface';
+import { STORAGE_TYPE } from '../core/storage/storage.constants';
+import { STORAGE_S3_PROVIDER } from '../core/storage/s3/s3.constants';
+import { StorageEngine } from 'multer';
+import { StorageService } from '../core/storage/storage.service';
+import { StorageEntity } from '../core/storage/storage.entity';
+import { STORAGE_DISK_PROVIDER } from '../core/storage/disk/disk.constants';
 
 @Controller()
 export class PublicUserController {
@@ -16,8 +26,23 @@ export class PublicUserController {
   constructor(
     private userService: UserService,
     private authenticationService: AuthenticationService,
+    @Inject(STORAGE_S3_PROVIDER) private s3StorageProvider: StorageEngine,
+    @Inject(STORAGE_DISK_PROVIDER) private diskStorageProvider: StorageEngine,
+    private storageService: StorageService,
   ) {
   }
+
+  @Post('/store')
+  @UseInterceptors(FileInterceptor('file', { storage: this.diskStorageProvider }))
+  public async changeProfileImage(
+    @Req() req: IRequest,
+    @UploadedFile() file: Express.MulterS3.File,
+  ): Promise<StorageEntity> {
+    console.log(this.diskStorageProvider);
+    console.log('file uploaded', file);
+    return await this.storageService.save(file, STORAGE_TYPE.DISK);
+  }
+
 
   /* Authorization */
 
@@ -35,22 +60,6 @@ export class PublicUserController {
     const token = this.authenticationService.sign(user.id);
 
     return new DAuthenticatedUser(user, token);
-  }
-
-  @Post('/login/google')
-  public async loginWithGoogle(@Body() body: VToken): Promise<DAuthenticatedUser> {
-    const { user, created } = await this.userService.loginWithGoogle(body.token);
-    const token = this.authenticationService.sign(user.id);
-
-    return new DAuthenticatedUser(user, token, created);
-  }
-
-  @Post('/login/facebook')
-  public async loginWithFacebook(@Body() body: VToken): Promise<DAuthenticatedUser> {
-    const { user, created } = await this.userService.loginWithFacebook(body.token);
-    const token = this.authenticationService.sign(user.id);
-
-    return new DAuthenticatedUser(user, token, created);
   }
 
   /* Email confirmation and password reset */

@@ -6,7 +6,6 @@ import { Response } from 'express';
 export class DefaultExceptionFilter implements ExceptionFilter {
 
   public catch(exception: Error, response: Response): void {
-    LogUtil.error(exception);
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(exception);
   }
 }

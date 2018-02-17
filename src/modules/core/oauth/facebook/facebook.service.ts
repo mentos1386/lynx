@@ -3,7 +3,6 @@ import { Facebook, FacebookApiException } from 'fb';
 import { FacebookLoginDTO } from './facebook.interface';
 import { IOAuth } from '../oauth.interface';
 import { InvalidTokenException } from '../../authentication/invalidToken.exception';
-import LogUtil from '../../../../utils/Log.util';
 
 @Component()
 export class OAuthFacebookService implements IOAuth<FacebookLoginDTO, any> {
@@ -30,7 +29,6 @@ export class OAuthFacebookService implements IOAuth<FacebookLoginDTO, any> {
 
     return new Promise((resolve, reject) => {
       this.client.api('me', { fields: 'id,name', access_token: accessToken }, (res) => {
-        LogUtil.debug(res);
       });
     });
 

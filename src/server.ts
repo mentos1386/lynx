@@ -16,7 +16,7 @@ async function bootstrap(): Promise<void> {
   instance.use(cors());
   instance.use('/uploads', express.static('uploads'));
 
-  const nestApp = await NestFactory.create(ApplicationModule, instance);
+  const nestApp = await NestFactory.create(ApplicationModule, <any>instance);
   nestApp.useGlobalInterceptors(new ResponseInterceptor());
   nestApp.useGlobalFilters(new RequestExceptionFilter(), new DefaultExceptionFilter());
   nestApp.useGlobalPipes(new ValidatorPipe());

@@ -5,6 +5,9 @@ import { AuthenticationService } from './authentication.service';
   components: [
     AuthenticationService,
   ],
+  exports: [
+    AuthenticationService,
+  ],
 })
 export class AuthenticationModule {
 }

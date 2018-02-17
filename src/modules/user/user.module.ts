@@ -9,6 +9,7 @@ import { EmailModule } from '../core/email/email.module';
 import { userProviders } from './user.providers';
 import { AuthenticationModule } from '../core/authentication/authentication.module';
 import { StorageModule } from '../core/storage/storage.module';
+import { CryptoModule } from '../core/crypto/crypto.module';
 
 @Module({
   modules: [
@@ -17,6 +18,7 @@ import { StorageModule } from '../core/storage/storage.module';
     OAuthModule,
     EmailModule,
     StorageModule,
+    CryptoModule,
   ],
   controllers: [
     UserUserController,

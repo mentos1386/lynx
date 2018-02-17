@@ -1,7 +1,5 @@
 import { Component, Inject } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { OAuthGoogleService } from '../core/oauth/google/google.service';
-import { OAuthFacebookService } from '../core/oauth/facebook/facebook.service';
 import { EmailService } from '../core/email/email.service';
 import {
   VLoginCredentials,
@@ -33,9 +31,6 @@ export class UserService {
 
   constructor(
     @Inject(USER_REPOSITORY_TOKEN) private userRepository: UserRepository,
-    private googleOauthService: OAuthGoogleService,
-    private facebookOauthService: OAuthFacebookService,
-    private emailService: EmailService,
     private storageService: StorageService,
     private authenticationService: AuthenticationService,
     private cryptoService: CryptoService,
@@ -74,98 +69,6 @@ export class UserService {
       throw new InvalidLoginCredentialsException();
 
     return user;
-  }
-
-  /**
-   * Login user with google
-   * @param {string} token
-   * @return {Promise<{ user: User, created: boolean }>}
-   */
-  public async loginWithGoogle(token: string): Promise<{ user: User, created: boolean }> {
-
-    const googleUser = await this.googleOauthService.verifyToken(token);
-
-    let user = await this.userRepository.findOneByGoogleId(googleUser.id);
-    let created = false;
-
-    if (!user) {
-      user = await this.userRepository.findOneByEmail(googleUser.email);
-
-      if (!user) {
-        const profileImageFile = await this.fileService.downloadFile(googleUser.picture);
-
-        const userData: Partial<User> = {
-          profile: { name: googleUser.name.split(' ')[0], surname: googleUser.name.split(' ')[1] },
-          oauth: { google: { userId: googleUser.sub } },
-          profileImage: await this.makeProfileImage(profileImageFile),
-        };
-
-        if (googleUser.email_verified) userData.email = googleUser.email;
-        else userData.unverifiedEmail = googleUser.email;
-
-        user = await this.create(userData);
-        created = true;
-
-        if (!user.email && user.unverifiedEmail) {
-          await this.sendEmailVerificationToken(user.unverifiedEmail);
-        }
-
-      } else {
-        // User with this email exists -> just add Google OAuth
-        if (!user.profileImage.url) {
-          const profilePicture = await this.fileService.downloadFile(googleUser.picture);
-          user.profileImage = await this.makeProfileImage(profilePicture);
-        }
-        _.set(user, 'oauth.google.userId', googleUser.sub);
-        await this.userRepository.save(user);
-      }
-    }
-
-    return { user, created };
-  }
-
-  /**
-   * Login with Facebook
-   * @param {string} accessToken
-   * @return {Promise<{ user: User, created: boolean }>}
-   */
-  public async loginWithFacebook(accessToken: string): Promise<{ user: User, created: boolean }> {
-
-    const facebookUser = await this.facebookOauthService.getUserInfo(accessToken);
-
-    let user = await this.userRepository.findOneByFacebookId(facebookUser.id);
-    let created = false;
-
-    if (!user) {
-      if (facebookUser.email) {
-        user = await this.userRepository.findOneByEmail(facebookUser.email);
-      } else {
-        const profilePictureUrl = await this.facebookOauthService.profilePicture(facebookUser.id);
-        const profilePicture = await this.fileService.downloadFile(profilePictureUrl);
-
-        user = await this.create({
-          email: facebookUser.email,
-          profile: {
-            name: facebookUser.name.split(' ')[0],
-            surname: facebookUser.name.split(' ')[1],
-          },
-          oauth: { facebook: { userId: facebookUser.id } },
-          profileImage: await this.makeProfileImage(profilePicture),
-        });
-        created = true;
-      }
-    } else {
-      // Email exists -> just add social login
-      if (!user.profileImage) {
-        const profilePictureUrl = await this.facebookOauthService.profilePicture(facebookUser.id);
-        const profilePicture = await this.fileService.downloadFile(profilePictureUrl);
-        user.profileImage = await this.makeProfileImage(profilePicture);
-      }
-      _.set(user, 'oauth.facebook.userId', facebookUser.id);
-      await this.userRepository.save(user);
-    }
-
-    return { user, created };
   }
 
   /**
@@ -261,7 +164,7 @@ export class UserService {
 
     await this.userRepository.save(user);
 
-    await this.emailService.sendPasswordChangeNotification(user.email);
+    // await this.emailService.sendPasswordChangeNotification(user.email);
   }
 
   /**
@@ -303,7 +206,7 @@ export class UserService {
     if (!user) throw new UserNotFoundException();
 
     const resetToken = this.authenticationService.sign(user.id, null, { expires: '1h' });
-    await this.emailService.sendPasswordReset(email, resetToken);
+    // await this.emailService.sendPasswordReset(email, resetToken);
 
     return true;
   }
@@ -375,7 +278,7 @@ export class UserService {
     await this.userRepository.save(user);
 
     if (oldImage) {
-      await this.fileService.remove(oldImage).catch(console.log.bind(console));
+      await this.storageService.remove(oldImage);
     }
 
     return user;
@@ -387,11 +290,11 @@ export class UserService {
    * @returns {Promise<StorageEntity>}
    */
   public async makeProfileImage(original: StorageEntity): Promise<StorageEntity> {
-    const image = await this.fileService.resize(original, 256, 256, true);
-    this.fileService.clearCache();
+    // const image = await this.fileService.resize(original, 256, 256, true);
+    // this.fileService.clearCache();
     // Remove original file
-    await this.fileService.remove(original.url);
-    return image;
+    // await this.fileService.remove(original.url);
+    return original;
   }
 
   /**
@@ -401,7 +304,7 @@ export class UserService {
    */
   private async sendEmailVerificationToken(email: string): Promise<boolean> {
     const verificationToken = jwt.sign({ email } as object, this.jwtSecret, { expiresIn: '24h' });
-    await this.emailService.sendEmailVerification(email, verificationToken);
+    // await this.emailService.sendEmailVerification(email, verificationToken);
     return true;
   }
 }

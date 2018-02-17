@@ -11,6 +11,10 @@ export class StorageEntity {
   @Column({ unique: true })
   url: string;
 
+  // Used to identify file on storage system
+  @Column({ unique: true })
+  key: string;
+
   @Column()
   size: number;
 

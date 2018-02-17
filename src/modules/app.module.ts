@@ -5,6 +5,7 @@ import { LoggerModule } from './core/logger/logger.module';
 import { AuthenticationModule } from './core/authentication/authentication.module';
 import { RouterModule } from 'nest-router';
 import { appRoutes } from './app.routes';
+import { DemoModule } from './demo/demo.module';
 
 @Module({
   modules: [
@@ -14,6 +15,7 @@ import { appRoutes } from './app.routes';
     RouterModule.forRoutes(appRoutes),
 
     UserModule,
+    DemoModule,
   ],
 })
 export class ApplicationModule implements NestModule {

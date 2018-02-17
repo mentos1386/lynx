@@ -10,7 +10,9 @@ import { DAuthenticatedUser, DUserProfile } from './user.dto';
 import { USER_ROLE } from './user.constants';
 import { AuthenticationService } from '../core/authentication/authentication.service';
 import { STORAGE_S3_PROVIDER } from '../core/storage/s3/s3.constants';
-import s3Storage = require('multer-s3');
+import { StorageEngine } from 'multer';
+import { StorageService } from '../core/storage/storage.service';
+import { STORAGE_TYPE } from '../core/storage/storage.constants';
 
 @Controller()
 @Roles(USER_ROLE.DEFAULT, USER_ROLE.ADMIN)
@@ -19,7 +21,8 @@ export class UserUserController {
   constructor(
     private userService: UserService,
     private authenticationService: AuthenticationService,
-    @Inject(STORAGE_S3_PROVIDER) private s3StorageProvider: any,
+    @Inject(STORAGE_S3_PROVIDER) private s3StorageProvider: StorageEngine,
+    private storageService: StorageService,
   ) {
   }
 
@@ -60,9 +63,13 @@ export class UserUserController {
   @UseInterceptors(FileInterceptor('image', { storage: this.s3StorageProvider }))
   public async changeProfileImage(
     @Req() req: IRequest,
-    @UploadedFile() image,
+    @UploadedFile() image: Express.MulterS3.File,
   ): Promise<DUserProfile> {
-    const user = await this.userService.changeProfileImage(req.user, image);
+
+    const storedImage = await this.storageService.save(image, STORAGE_TYPE.AWS_S3);
+
+    const user = await this.userService.changeProfileImage(req.user, storedImage);
+
     return new DUserProfile(user);
   }
 

@@ -61,7 +61,7 @@
     "rxjs": "^5.5.2",
     "sharp": "^0.18.4",
     "tslint-config-airbnb": "^5.6.0",
-    "typeorm": "next",
+    "typeorm": "^0.2.0-alpha.18",
     "typescript": "~2.7.1",
     "winston": "^2.4.0"
   },

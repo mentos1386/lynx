@@ -18,15 +18,17 @@ export class DemoController {
   @Post('/upload')
   @UseInterceptors(mixinStorageInterceptor(
     () => 'file',
-    () => STORAGE_TYPE.DISK,
   ))
   public async upload(
     @Req() req: IRequest,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.MulterS3.File,
   ) {
     // file should have path/destination property if is written
     console.log('file uploaded', file);
-    return file;
+
+    const saved = await this.storageService.save(file, STORAGE_TYPE.DISK);
+
+    return saved;
   }
 
 }

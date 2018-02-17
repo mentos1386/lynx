@@ -19,7 +19,7 @@ Code Style | [Airbnb](https://github.com/airbnb/javascript) & [TS-Lint](https://
 
 ## Progress
 
- - [ ] File Upload (disk, s3, memory)
+ - [x] File Upload (disk, s3, memory)
  - [ ] Authentication (JWT, OAuth)
  - [ ] Logger
  - [ ] Request Context

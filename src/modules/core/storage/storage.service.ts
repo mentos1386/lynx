@@ -1,16 +1,18 @@
 import { Component, Inject } from '@nestjs/common';
 import { STORAGE_REPOSITORY_TOKEN, STORAGE_TYPE } from './storage.constants';
-import { NotFoundException } from '../../../exceptions/notFoundException';
 import { StorageRepository } from './storage.repository';
 import { StorageEntity } from './storage.entity';
 import { StorageS3Service } from './s3/s3.service';
 import { StorageDiskService } from './disk/disk.service';
+import { EntityNotFoundException } from '../../../exceptions/entityNotFound.exception';
+import { UserRepository } from '../../user/user.repository';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Component()
 export class StorageService {
 
   constructor(
-    @Inject(STORAGE_REPOSITORY_TOKEN) private storageRepository: StorageRepository,
+    @InjectRepository(StorageRepository) private storageRepository: StorageRepository,
     private storageS3Service: StorageS3Service,
     private storageDiskService: StorageDiskService,
   ) {
@@ -74,7 +76,7 @@ export class StorageService {
   public async getByUrl(url: string): Promise<StorageEntity> {
     const entity = await this.storageRepository.findOneByUrl(url);
 
-    if (!entity) throw new NotFoundException('storageEntity');
+    if (!entity) throw new EntityNotFoundException('storageEntity');
 
     return entity;
   }
@@ -87,7 +89,7 @@ export class StorageService {
   public async getById(id: string): Promise<StorageEntity> {
     const entity = await this.storageRepository.findOne(id);
 
-    if (!entity) throw new NotFoundException('storageEntity');
+    if (!entity) throw new EntityNotFoundException('storageEntity');
 
     return entity;
   }

@@ -11,8 +11,7 @@ import { User } from './user.entity';
 import { StorageEntity } from '../core/storage/storage.entity';
 import * as _ from 'lodash';
 import { EmailExistsException } from './exceptions/emailExists.exception';
-import { InvalidLoginCredentialsException } from './exceptions/invalidLoginCredentials.exception';
-import { UserNotFoundException } from './exceptions/userNotFound.exception';
+import { InvalidLoginException } from './exceptions/invalidLogin.exception';
 import { InvalidTokenException } from '../core/authentication/invalidToken.exception';
 import { LastAdminException } from './exceptions/lastAdmin.exception';
 import { EmailNotVerifiedException } from './exceptions/emailNotVerified.exception';
@@ -23,6 +22,8 @@ import { AuthenticationService } from '../core/authentication/authentication.ser
 import { CryptoService } from '../core/crypto/crypto.service';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { StorageService } from '../core/storage/storage.service';
+import { EntityNotFoundException } from '../../exceptions/entityNotFound.exception';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Component()
 export class UserService {
@@ -30,7 +31,7 @@ export class UserService {
   private jwtSecret: string = process.env.JWT_SECRET;
 
   constructor(
-    @Inject(USER_REPOSITORY_TOKEN) private userRepository: UserRepository,
+    @InjectRepository(UserRepository) private userRepository: UserRepository,
     private storageService: StorageService,
     private authenticationService: AuthenticationService,
     private cryptoService: CryptoService,
@@ -62,11 +63,11 @@ export class UserService {
     const user = await this.userRepository.findOneByEmailOrUnverifiedEmail(data.email);
 
     if (!user || !user.password)
-      throw new InvalidLoginCredentialsException();
+      throw new InvalidLoginException();
     if (user.email !== data.email)
       throw new EmailNotVerifiedException();
     if (!await this.cryptoService.compare(data.password, user.password))
-      throw new InvalidLoginCredentialsException();
+      throw new InvalidLoginException();
 
     return user;
   }
@@ -112,7 +113,7 @@ export class UserService {
     const user = await this.userRepository.findOne(id);
 
     if (!user || (user && user.blocked && !ignoreBlocked))
-      throw new UserNotFoundException();
+      throw new EntityNotFoundException('user');
 
     return user;
   }
@@ -125,7 +126,7 @@ export class UserService {
   public async canAddEmail(email: string): Promise<void> {
     const userWithEmail = await this.userRepository.findOneByEmailOrUnverifiedEmail(email);
 
-    if (userWithEmail) throw new EmailExistsException(email);
+    if (userWithEmail) throw new EmailExistsException();
   }
 
   /**
@@ -174,7 +175,7 @@ export class UserService {
    */
   public async resendVerificationEmail(email: string): Promise<boolean> {
     const user = await this.userRepository.findOneByUnverifiedEmail(email);
-    if (!user) throw new UserNotFoundException();
+    if (!user) throw new EntityNotFoundException('user');
 
     return this.sendEmailVerificationToken(email);
   }
@@ -203,7 +204,7 @@ export class UserService {
    */
   public async requestPasswordReset(email: string): Promise<boolean> {
     const user = await this.userRepository.findOneByEmail(email);
-    if (!user) throw new UserNotFoundException();
+    if (!user) throw new EntityNotFoundException('user');
 
     const resetToken = this.authenticationService.sign(user.id, null, { expires: '1h' });
     // await this.emailService.sendPasswordReset(email, resetToken);
@@ -220,7 +221,7 @@ export class UserService {
     const jwtObject = this.authenticationService.verify(data.token);
 
     const user = await this.userRepository.findOne(jwtObject.userId);
-    if (!user) throw new UserNotFoundException();
+    if (!user) throw new EntityNotFoundException('user');
 
     user.password = await this.cryptoService.hash(data.password);
 
@@ -237,7 +238,7 @@ export class UserService {
   public async remove(id: number): Promise<void> {
     const user = await this.userRepository.findOne(id);
 
-    if (!user) throw new UserNotFoundException();
+    if (!user) throw new EntityNotFoundException('user');
 
     if (user.role === USER_ROLE.ADMIN) {
       const count = await this.userRepository.count({ where: { type: USER_ROLE.ADMIN } });

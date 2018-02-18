@@ -1,4 +1,6 @@
 # Lynx Framework
+> Not yet usable, as is still in active development with major changes
+> happening.
 
 ## Built with
 _**Bold** are required components (not easy to replace)_
@@ -21,7 +23,7 @@ Code Style | [Airbnb](https://github.com/airbnb/javascript) & [TS-Lint](https://
 
  - [x] File Upload (disk, s3, memory)
  - [ ] Authentication (JWT, OAuth)
- - [ ] Logger
+ - [x] Logger
  - [ ] Request Context
  - [ ] Error Reporting
  - [ ] Database Migrations

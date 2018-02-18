@@ -16,8 +16,8 @@ npm-debug.log
 # dist
 /dist
 
-# upload storage
-/uploads
+# Uploads
+/public/uploads
 
 # Config
 .env

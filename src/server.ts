@@ -2,25 +2,44 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import * as express from 'express';
 import * as cors from 'cors';
 import { ApplicationModule } from './modules/app.module';
-import { ValidatorPipe } from './pipes/validator.pipe';
+import { ValidatorPipe } from './modules/core/validation/validator.pipe';
 import { config } from 'dotenv';
-import { RequestExceptionFilter } from './filters/requestException.filter';
-import { DefaultExceptionFilter } from './filters/defaultException.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
-import { RolesGuard } from './guards/roles.guard';
+import { FormatterInterceptor } from './interceptors/formatter.interceptor';
+import { UserRolesGuard } from './modules/user/guards/roles.guard';
+import { LoggerModule } from './modules/core/logger/logger.module';
+import { LoggerInterceptor } from './modules/core/logger/logger.interceptor';
+import { UserModule } from './modules/user/user.module';
 
 async function bootstrap(): Promise<void> {
-  config();
-  const instance = express();
 
-  instance.use(cors());
-  instance.use('/uploads', express.static('uploads'));
+  // Use .env to configure environment variables (process.env)
+  config();
+
+  const instance = express();
+  instance.use('/public/uploads', express.static('public/uploads'));
 
   const nestApp = await NestFactory.create(ApplicationModule, <any>instance);
-  nestApp.useGlobalInterceptors(new ResponseInterceptor());
-  nestApp.useGlobalFilters(new RequestExceptionFilter(), new DefaultExceptionFilter());
-  nestApp.useGlobalPipes(new ValidatorPipe());
-  nestApp.useGlobalGuards(new RolesGuard(new Reflector()));
+
+  // Enable cors
+  nestApp.enableCors();
+
+  // Interceptors
+  const loggerInterceptor = nestApp.select(LoggerModule).get(LoggerInterceptor);
+  nestApp.useGlobalInterceptors(
+    loggerInterceptor,          // Log exceptions
+    new FormatterInterceptor(), // Properly format response
+  );
+
+  // Roles
+  const rolesGuard = nestApp.select(UserModule).get(UserRolesGuard);
+  nestApp.useGlobalGuards(
+    rolesGuard, // Set Access rights based on user roles
+  );
+
+  // Validators
+  nestApp.useGlobalPipes(
+    new ValidatorPipe(), // Validate inputs
+  );
 
   const server = await nestApp.listen(parseInt(process.env.API_PORT, 10));
   console.info(`Application is listening on port ${process.env.API_PORT}.`);

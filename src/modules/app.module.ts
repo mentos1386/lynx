@@ -6,12 +6,16 @@ import { AuthenticationModule } from './core/authentication/authentication.modul
 import { RouterModule } from 'nest-router';
 import { appRoutes } from './app.routes';
 import { DemoModule } from './demo/demo.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   modules: [
     LoggerModule, // Global
     AuthenticationModule, // Required for AuthMiddleware
 
+    // Init TypeOrm
+    TypeOrmModule.forRoot(),
+    // Init Router
     RouterModule.forRoutes(appRoutes),
 
     UserModule,
@@ -21,6 +25,7 @@ import { DemoModule } from './demo/demo.module';
 export class ApplicationModule implements NestModule {
 
   public configure(consumer: MiddlewaresConsumer): void {
+    // We apply AuthMiddleware globally and then set access right with guards.
     consumer.apply(AuthMiddleware)
     .forRoutes({ path: '*' });
   }

@@ -3,13 +3,13 @@ import { Body, Controller, Get, Param, Post, Put, Query, Req, Res } from '@nestj
 import { UserService } from './user.service';
 import { VBlocked, VUserQuery } from './user.validations';
 import { IRequest } from '../../interfaces/request.interface';
-import { Roles } from '../../guards/roles.decorator';
+import { UserRoles } from './guards/roles.decorator';
 import { USER_ROLE } from './user.constants';
 import { AuthenticationService } from '../core/authentication/authentication.service';
 import { DAuthenticatedUser, DUserProfile } from './user.dto';
 
 @Controller()
-@Roles(USER_ROLE.ADMIN)
+@UserRoles(USER_ROLE.ADMIN)
 export class AdminUserController {
 
   constructor(

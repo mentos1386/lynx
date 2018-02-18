@@ -5,7 +5,7 @@ import {
 import { UserService } from './user.service';
 import { VChangeUserRole, VProfile, VUpdatePassword } from './user.validations';
 import { IRequest } from '../../interfaces/request.interface';
-import { Roles } from '../../guards/roles.decorator';
+import { UserRoles } from './guards/roles.decorator';
 import { DAuthenticatedUser, DUserProfile } from './user.dto';
 import { USER_ROLE } from './user.constants';
 import { AuthenticationService } from '../core/authentication/authentication.service';
@@ -16,7 +16,7 @@ import { STORAGE_TYPE } from '../core/storage/storage.constants';
 import { mixinStorageInterceptor } from '../core/storage/storage.interceptor.mixin';
 
 @Controller()
-@Roles(USER_ROLE.DEFAULT, USER_ROLE.ADMIN)
+@UserRoles(USER_ROLE.DEFAULT, USER_ROLE.ADMIN)
 export class UserUserController {
 
   constructor(
@@ -45,7 +45,7 @@ export class UserUserController {
   }
 
   @Put('/type')
-  @Roles(USER_ROLE.DEFAULT)
+  @UserRoles(USER_ROLE.DEFAULT)
   public async changeType(
     @Req() req: IRequest,
     @Body() data: VChangeUserRole,

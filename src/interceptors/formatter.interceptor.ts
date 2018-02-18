@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 @Interceptor()
-export class ResponseInterceptor implements NestInterceptor {
+export class FormatterInterceptor implements NestInterceptor {
   intercept(
     dataOrRequest: Request | any,
     context: ExecutionContext,

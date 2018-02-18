@@ -1,18 +1,19 @@
 import { LoggerInstance } from 'winston';
-import { Inject } from '@nestjs/common';
-import { LOGGER_WINSTON_PROVIDER } from './logger.constants';
+import { Component, Inject } from '@nestjs/common';
+import { LOGGER_LEVEL, LOGGER_WINSTON_PROVIDER } from './logger.constants';
 
+@Component()
 export class LoggerService {
 
   constructor(@Inject(LOGGER_WINSTON_PROVIDER) private winston: LoggerInstance) {
   }
 
-  public debug(msg: string, ...meta): void {
-    this.winston.debug(msg, ...meta);
+  public log(level: LOGGER_LEVEL, msg: string, ...meta): void {
+    this.winston.log(level, msg, ...meta);
   }
 
-  public log(level: string, msg: string, ...meta): void {
-    this.winston.log(level, msg, ...meta);
+  public debug(msg: string, ...meta): void {
+    this.winston.debug(msg, ...meta);
   }
 
   public error(msg: string, ...meta): void {
@@ -30,5 +31,4 @@ export class LoggerService {
   public silly(msg: string, ...meta): void {
     this.winston.silly(msg, ...meta);
   }
-
 }

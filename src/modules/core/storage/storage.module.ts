@@ -1,19 +1,19 @@
-import { MiddlewaresConsumer, Module } from '@nestjs/common';
-import { storageRepositoryProviders } from './storage.providers';
-import { DatabaseModule } from '../database/database.module';
+import { Module } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { s3StorageProvider } from './s3/s3.storage.provider';
 import { diskStorageProvider } from './disk/disk.storage.provider';
 import { awsS3Providers } from './s3/s3.providers';
 import { StorageS3Service } from './s3/s3.service';
 import { StorageDiskService } from './disk/disk.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { StorageEntity } from './storage.entity';
+import { StorageRepository } from './storage.repository';
 
 @Module({
-  modules: [
-    DatabaseModule,
+  imports: [
+    TypeOrmModule.forFeature([StorageEntity, StorageRepository]),
   ],
   components: [
-    ...storageRepositoryProviders,
     StorageService,
 
     // S3 Storage provider

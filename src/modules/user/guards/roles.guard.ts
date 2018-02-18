@@ -1,12 +1,13 @@
-import { CanActivate, ExecutionContext, Guard } from '@nestjs/common';
+import {
+  CanActivate, ExecutionContext, ForbiddenException, Guard,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ForbiddenException } from '../exceptions/forbidden.exception';
-import { EmailNotVerifiedException } from '../modules/user/exceptions/emailNotVerified.exception';
-import { BlockedException } from '../modules/user/exceptions/blocked.exception';
-import { UnauthorizedException } from '../modules/user/exceptions/unauthorized.exception';
+import { EmailNotVerifiedException } from '../exceptions/emailNotVerified.exception';
+import { UserBlockedException } from '../exceptions/userBlocked.exception';
 
 @Guard()
-export class RolesGuard implements CanActivate {
+export class UserRolesGuard implements CanActivate {
 
   constructor(private readonly reflector: Reflector) {
   }
@@ -15,7 +16,6 @@ export class RolesGuard implements CanActivate {
     let roles = this.reflector.get<string[]>('roles', context.handler);
     if (!roles) {
       roles = this.reflector.get<string[]>('roles', context.parent);
-
       if (!roles) return true;
     }
 
@@ -30,10 +30,10 @@ export class RolesGuard implements CanActivate {
 
     // If user is not being impersonated and they are blocked
     if (!req.impersonatedById && req.user.blocked)
-      throw new BlockedException();
+      throw new UserBlockedException();
 
     if (!user.type || !roles.find(role => role === user.type.toUpperCase())) {
-      throw new ForbiddenException('you must be one of ' + roles.join(', '));
+      throw new ForbiddenException();
     }
     return true;
   }

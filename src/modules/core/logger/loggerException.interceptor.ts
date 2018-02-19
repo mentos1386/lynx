@@ -5,7 +5,7 @@ import { LoggerService } from './logger.service';
 import { Request } from 'express';
 
 @Interceptor()
-export class LoggerInterceptor implements NestInterceptor {
+export class LoggerExceptionInterceptor implements NestInterceptor {
 
   constructor(private loggerService: LoggerService) {
   }

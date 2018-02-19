@@ -1,6 +1,5 @@
-import { Component, Inject } from '@nestjs/common';
+import { Component } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { EmailService } from '../core/email/email.service';
 import {
   VLoginCredentials,
   VPasswordReset,
@@ -16,7 +15,7 @@ import { InvalidTokenException } from '../core/authentication/invalidToken.excep
 import { LastAdminException } from './exceptions/lastAdmin.exception';
 import { EmailNotVerifiedException } from './exceptions/emailNotVerified.exception';
 import { DAuthenticatedUser } from './user.dto';
-import { USER_REPOSITORY_TOKEN, USER_ROLE } from './user.constants';
+import { USER_ROLE } from './user.constants';
 import { UserRepository } from './user.repository';
 import { AuthenticationService } from '../core/authentication/authentication.service';
 import { CryptoService } from '../core/crypto/crypto.service';
@@ -24,6 +23,7 @@ import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { StorageService } from '../core/storage/storage.service';
 import { EntityNotFoundException } from '../../exceptions/entityNotFound.exception';
 import { InjectRepository } from '@nestjs/typeorm';
+import { VPagination } from '../core/pagination/pagination.validation';
 
 @Component()
 export class UserService {
@@ -75,9 +75,10 @@ export class UserService {
   /**
    * List users
    * @param {VUserQuery} query
+   * @param pagination
    * @returns {Promise<User[]>}
    */
-  public async list(query: VUserQuery) {
+  public async list(query: VUserQuery, pagination: VPagination) {
 
     const queryBuild = this.userRepository.createQueryBuilder('user')
     .where('blocked = false');
@@ -96,8 +97,8 @@ export class UserService {
     if (query.role) queryBuild.andWhere('role = :role', { role: query.role });
     else queryBuild.andWhere('role != :role', { role: USER_ROLE.ADMIN });
 
-    const [rows, count] = await queryBuild.offset(query.page * query.perPage)
-    .limit(query.perPage)
+    const [rows, count] = await queryBuild.offset(pagination.page * pagination.limit)
+    .limit(pagination.limit)
     .getManyAndCount();
 
     return { users: rows, total: count };

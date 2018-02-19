@@ -1,9 +1,6 @@
-import { validate } from 'class-validator';
 import { ArgumentMetadata, Pipe, PipeTransform } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
-import { ValidationException } from './validation.exception';
 import { isNil } from '@nestjs/common/utils/shared.utils';
-import { sanitize } from 'class-sanitizer';
+import { lynxValidate } from './validation.util';
 
 @Pipe()
 export class ValidatorPipe implements PipeTransform<any> {
@@ -13,16 +10,7 @@ export class ValidatorPipe implements PipeTransform<any> {
       return value;
     }
 
-    // Transform to class
-    const entity = plainToClass(metatype, value);
-    // Sanitize
-    sanitize(entity);
-    // Validate
-    const errors = await validate(entity, { skipMissingProperties: true, whitelist: true });
-
-    if (errors.length > 0) throw new ValidationException(errors);
-
-    return entity;
+    return await lynxValidate(metatype, value);
   }
 
   private toValidate(metadata: ArgumentMetadata): boolean {

@@ -2,16 +2,18 @@ import { NestInterceptor } from '@nestjs/common/interfaces/nest-interceptor.inte
 import { ExecutionContext } from '@nestjs/common/interfaces/execution-context.interface';
 import { Observable } from 'rxjs/Observable';
 import * as multer from 'multer';
-import { Inject, Interceptor } from '@nestjs/common';
+import { BadRequestException, Inject, Interceptor } from '@nestjs/common';
 import { STORAGE_TYPE } from './storage.constants';
 import { STORAGE_DISK_PROVIDER } from './disk/disk.constants';
 import { STORAGE_S3_PROVIDER } from './s3/s3.constants';
+import { extension } from 'mime-types';
 
 @Interceptor()
-export abstract class StorageInterceptor implements NestInterceptor {
+export abstract class AbstractStorageInterceptor implements NestInterceptor {
 
-  protected abstract readonly storageType: () => STORAGE_TYPE;
-  protected abstract readonly fieldName: () => string;
+  protected abstract readonly storageType: STORAGE_TYPE;
+  protected abstract readonly fieldName: string;
+  protected abstract readonly required: boolean;
 
   constructor(
     @Inject(STORAGE_S3_PROVIDER) private storageS3Provider: multer.StorageEngine,
@@ -29,15 +31,23 @@ export abstract class StorageInterceptor implements NestInterceptor {
       storage: this.createStorage(),
     });
 
-    await new Promise((resolve, reject) =>
-      upload.single(this.fieldName())(request, request.res, resolve),
+    const fileOrError = await new Promise((resolve, reject) =>
+      upload.array(this.fieldName)(request, request.res, resolve),
     );
+
+    if (fileOrError instanceof Error) {
+      throw fileOrError;
+    }
+
+    if (this.required && !request.file) {
+      throw new BadRequestException('File is missing', 'FILE_MISSING_EXCEPTION');
+    }
 
     return stream$;
   }
 
   private createStorage(): multer.StorageEngine {
-    switch (this.storageType()) {
+    switch (this.storageType) {
       case STORAGE_TYPE.AWS_S3:
         return this.storageS3Provider;
       case STORAGE_TYPE.DISK:

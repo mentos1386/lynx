@@ -5,6 +5,6 @@ export class VPagination {
   @IsNumber() @Min(0) @Type(() => Number)
   page: number = 0;
   @IsNumber() @Min(1) @Type(() => Number)
-  perPage: number = 10;
+  limit: number = 10;
 }
 

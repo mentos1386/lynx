@@ -1,12 +1,14 @@
-import { Response } from 'express';
-import { Body, Controller, Get, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { VBlocked, VUserQuery } from './user.validations';
-import { IRequest } from '../../interfaces/request.interface';
 import { UserRoles } from './guards/roles.decorator';
 import { USER_ROLE } from './user.constants';
 import { AuthenticationService } from '../core/authentication/authentication.service';
 import { DAuthenticatedUser, DUserProfile } from './user.dto';
+import { Pagination } from '../core/pagination/pagination.decorator';
+import { VPagination } from '../core/pagination/pagination.validation';
+import { AuthenticatedUser } from '../core/authentication/authentication.decorators';
+import { User } from './user.entity';
 
 @Controller()
 @UserRoles(USER_ROLE.ADMIN)
@@ -19,14 +21,15 @@ export class AdminUserController {
   }
 
   @Get()
-  public async list(@Query() query: VUserQuery) {
-    return this.userService.list(query);
+  public async list(
+    @Query() query: VUserQuery,
+    @Pagination() pagination: VPagination,
+  ) {
+    return this.userService.list(query, pagination);
   }
 
   @Get('/:userId')
   public async getUser(
-    @Req() req: IRequest,
-    @Res() res: Response,
     @Param('userId') userId: number,
   ): Promise<DUserProfile> {
     const user = await this.userService.get(userId);
@@ -45,13 +48,12 @@ export class AdminUserController {
 
   @Post('/:userId/impersonate')
   public async impersonate(
-    @Req() req: IRequest,
-    @Res() res: Response,
     @Param('userId') userId: number,
+    @AuthenticatedUser() authenticatedUser: User,
   ): Promise<DAuthenticatedUser> {
     const user = await this.userService.get(userId);
-    const token = await this.authenticationService.sign(user.id, req.user.id);
+    const token = await this.authenticationService.sign(user.id, authenticatedUser.id);
 
-    return new DAuthenticatedUser(user, token, false, req.user.id);
+    return new DAuthenticatedUser(user, token, false, authenticatedUser.id);
   }
 }

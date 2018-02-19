@@ -2,10 +2,9 @@ import {
   Controller, Post, UseInterceptors,
   Req, UploadedFile, Get, ForbiddenException,
 } from '@nestjs/common';
-import { IRequest } from '../../interfaces/request.interface';
 import { STORAGE_TYPE } from '../core/storage/storage.constants';
 import { StorageService } from '../core/storage/storage.service';
-import { mixinStorageInterceptor } from '../core/storage/storage.interceptor.mixin';
+import { StorageInterceptor } from '../core/storage/storage.interceptor.mixin';
 import { LoggerService } from '../core/logger/logger.service';
 import { UserBlockedException } from '../user/exceptions/userBlocked.exception';
 
@@ -38,19 +37,15 @@ export class DemoController {
   }
 
   @Post('/upload')
-  @UseInterceptors(mixinStorageInterceptor(
-    () => 'file',
-  ))
+  @UseInterceptors(StorageInterceptor('file', STORAGE_TYPE.DISK))
   public async upload(
-    @Req() req: IRequest,
     @UploadedFile() file: Express.MulterS3.File,
   ) {
     // file should have path/destination property if is written
     console.log('file uploaded', file);
 
-    const saved = await this.storageService.save(file, STORAGE_TYPE.DISK);
-
-    return saved;
+    return file;
+    // return await this.storageService.save(file, STORAGE_TYPE.DISK);
   }
 
 }

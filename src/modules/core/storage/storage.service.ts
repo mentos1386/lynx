@@ -1,11 +1,10 @@
-import { Component, Inject } from '@nestjs/common';
-import { STORAGE_REPOSITORY_TOKEN, STORAGE_TYPE } from './storage.constants';
+import { Component } from '@nestjs/common';
+import { STORAGE_TYPE } from './storage.constants';
 import { StorageRepository } from './storage.repository';
 import { StorageEntity } from './storage.entity';
 import { StorageS3Service } from './s3/s3.service';
 import { StorageDiskService } from './disk/disk.service';
 import { EntityNotFoundException } from '../../../exceptions/entityNotFound.exception';
-import { UserRepository } from '../../user/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Component()

@@ -9,6 +9,9 @@ import { UserRolesGuard } from './modules/user/guards/roles.guard';
 import { LoggerModule } from './modules/core/logger/logger.module';
 import { LoggerExceptionInterceptor } from './modules/core/logger/loggerException.interceptor';
 import { UserModule } from './modules/user/user.module';
+import { RavenModule } from './modules/core/raven/raven.module';
+import { RavenInterceptor } from './modules/core/raven/raven.interceptor.mixin';
+import { HttpException } from '@nestjs/common';
 
 async function bootstrap(): Promise<void> {
 

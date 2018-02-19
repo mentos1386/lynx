@@ -1,12 +1,13 @@
 import {
   Controller, Post, UseInterceptors,
-  Req, UploadedFile, Get, ForbiddenException,
+  Req, UploadedFile, Get, ForbiddenException, HttpException,
 } from '@nestjs/common';
 import { STORAGE_TYPE } from '../core/storage/storage.constants';
 import { StorageService } from '../core/storage/storage.service';
 import { StorageInterceptor } from '../core/storage/storage.interceptor.mixin';
 import { LoggerService } from '../core/logger/logger.service';
 import { UserBlockedException } from '../user/exceptions/userBlocked.exception';
+import { RavenInterceptor } from '../core/raven/raven.interceptor.mixin';
 
 @Controller()
 export class DemoController {
@@ -31,6 +32,7 @@ export class DemoController {
     throw new UserBlockedException();
   }
 
+  @UseInterceptors(RavenInterceptor(HttpException))
   @Get('/exception/http')
   public async exceptionHttp() {
     throw new ForbiddenException({ message: 'this should be', with: ['an', 'array'] });

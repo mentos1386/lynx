@@ -19,7 +19,8 @@ import { RavenModule } from './core/raven/raven.module';
     // Init Router
     RouterModule.forRoutes(appRoutes),
 
-    RavenModule.forRoot('https://d0b82e2eb2ce46eeb93ac186e245d128:c1613922bc88444f8ad926b063e9a51a@sentry.io/290747'),
+    RavenModule.forRoot(
+      'https://d0b82e2eb2ce46eeb93ac186e245d128:c1613922bc88444f8ad926b063e9a51a@sentry.io/290747'),
 
     UserModule,
     DemoModule,

@@ -28,6 +28,12 @@ export class RavenModule {
           useValue: { dsn, options },
         },
       ],
+      exports: [
+        {
+          provide: RAVEN_SENTRY_CONFIG,
+          useValue: { dsn, options },
+        },
+      ],
     };
   }
 }

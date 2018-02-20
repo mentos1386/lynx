@@ -1,6 +1,7 @@
 import {
   Controller, Post, UseInterceptors,
-  Req, UploadedFile, Get, ForbiddenException, HttpException,
+  Req, UploadedFile, Get, ForbiddenException, HttpException, InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { STORAGE_TYPE } from '../core/storage/storage.constants';
 import { StorageService } from '../core/storage/storage.service';
@@ -32,10 +33,19 @@ export class DemoController {
     throw new UserBlockedException();
   }
 
-  @UseInterceptors(RavenInterceptor(HttpException))
+  @UseInterceptors(RavenInterceptor({
+    filters: [
+      { type: HttpException, filter: (exception: HttpException) => 500 > exception.getStatus() },
+    ],
+    tags: {
+      tryingOut: 'ravenInterceptor',
+    },
+    level: 'warning',
+  }))
   @Get('/exception/http')
   public async exceptionHttp() {
-    throw new ForbiddenException({ message: 'this should be', with: ['an', 'array'] });
+    throw new Error('some error');
+    // throw new BadRequestException({ message: 'this should be', with: ['an', 'array'] });
   }
 
   @Post('/upload')

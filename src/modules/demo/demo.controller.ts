@@ -8,7 +8,7 @@ import { StorageService } from '../core/storage/storage.service';
 import { StorageInterceptor } from '../core/storage/storage.interceptor.mixin';
 import { LoggerService } from '../core/logger/logger.service';
 import { UserBlockedException } from '../user/exceptions/userBlocked.exception';
-import { RavenInterceptor } from '../core/raven/raven.interceptor.mixin';
+import { RavenInterceptor } from 'nest-raven';
 
 @Controller()
 export class DemoController {

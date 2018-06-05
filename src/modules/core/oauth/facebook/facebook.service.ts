@@ -1,10 +1,10 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Facebook, FacebookApiException } from 'fb';
 import { FacebookLoginDTO } from './facebook.interface';
 import { IOAuth } from '../oauth.interface';
 import { InvalidTokenException } from '../../authentication/invalidToken.exception';
 
-@Component()
+@Injectable()
 export class OAuthFacebookService implements IOAuth<FacebookLoginDTO, any> {
 
   private client: any;

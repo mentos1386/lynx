@@ -1,7 +1,7 @@
 import {
   Controller, Post, UseInterceptors,
   Req, UploadedFile, Get, ForbiddenException, HttpException, InternalServerErrorException,
-  BadRequestException,
+  BadRequestException, HttpStatus,
 } from '@nestjs/common';
 import { STORAGE_TYPE } from '../core/storage/storage.constants';
 import { StorageService } from '../core/storage/storage.service';
@@ -31,6 +31,11 @@ export class DemoController {
   @Get('/exception/custom')
   public async exceptionCustom() {
     throw new UserBlockedException();
+  }
+
+  @Get('/exception/sentry')
+  public async exceptionSentry() {
+    throw new HttpException('Should be cached by sentry', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @UseInterceptors(RavenInterceptor({

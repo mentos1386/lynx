@@ -1,7 +1,7 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
 
-@Component()
+@Injectable()
 export class CryptoService {
 
   private readonly type = argon2.argon2id;

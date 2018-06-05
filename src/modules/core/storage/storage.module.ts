@@ -13,7 +13,7 @@ import { StorageRepository } from './storage.repository';
   imports: [
     TypeOrmModule.forFeature([StorageEntity, StorageRepository]),
   ],
-  components: [
+  providers: [
     StorageService,
 
     // S3 Storage provider

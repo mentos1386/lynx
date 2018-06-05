@@ -1,20 +1,22 @@
-import { Interceptor, NestInterceptor, ExecutionContext, HttpException } from '@nestjs/common';
+import { NestInterceptor, ExecutionContext, HttpException,
+  Injectable,
+} from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import { LoggerService } from './logger.service';
-import { Request } from 'express';
 
-@Interceptor()
+@Injectable()
 export class LoggerExceptionInterceptor implements NestInterceptor {
 
   constructor(private loggerService: LoggerService) {
   }
 
   intercept(
-    request: Request,
     context: ExecutionContext,
     stream$: Observable<any>,
   ): Observable<any> {
+    const request = context.switchToHttp().getRequest();
+
     // first param would be for events, second is for errors
     return stream$.do(null, (exception) => {
       if (exception instanceof HttpException) {

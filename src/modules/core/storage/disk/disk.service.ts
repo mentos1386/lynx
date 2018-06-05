@@ -1,10 +1,10 @@
 import { IStorageService } from '../storage.interface';
 import { StorageEntity } from '../storage.entity';
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
-@Component()
+@Injectable()
 export class StorageDiskService implements IStorageService {
 
   private readonly STORAGE_DISK_PATH = process.env.STORAGE_DISK_PATH;

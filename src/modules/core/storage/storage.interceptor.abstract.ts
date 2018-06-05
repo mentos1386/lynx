@@ -2,13 +2,12 @@ import { NestInterceptor } from '@nestjs/common/interfaces/nest-interceptor.inte
 import { ExecutionContext } from '@nestjs/common/interfaces/execution-context.interface';
 import { Observable } from 'rxjs/Observable';
 import * as multer from 'multer';
-import { BadRequestException, Inject, Interceptor } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { STORAGE_TYPE } from './storage.constants';
 import { STORAGE_DISK_PROVIDER } from './disk/disk.constants';
 import { STORAGE_S3_PROVIDER } from './s3/s3.constants';
-import { extension } from 'mime-types';
 
-@Interceptor()
+@Injectable()
 export abstract class AbstractStorageInterceptor implements NestInterceptor {
 
   protected abstract readonly storageType: STORAGE_TYPE;

@@ -11,7 +11,7 @@ import { DemoController } from './demo.controller';
   controllers: [
     DemoController,
   ],
-  components: [],
+  providers: [],
   exports: [],
 })
 export class DemoModule {

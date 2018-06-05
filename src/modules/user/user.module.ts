@@ -27,7 +27,7 @@ import { UserRepository } from './user.repository';
     AdminUserController,
     PublicUserController,
   ],
-  components: [
+  providers: [
     UserService,
     UserRolesGuard,
   ],

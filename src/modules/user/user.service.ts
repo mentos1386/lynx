@@ -1,4 +1,4 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import {
   VLoginCredentials,
@@ -25,7 +25,7 @@ import { EntityNotFoundException } from '../../exceptions/entityNotFound.excepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { VPagination } from '../core/pagination/pagination.validation';
 
-@Component()
+@Injectable()
 export class UserService {
 
   private jwtSecret: string = process.env.JWT_SECRET;

@@ -1,11 +1,11 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OAuth } from 'oauth';
 import * as google from 'googleapis';
 import { IGooglePlusResponse } from './google.interface';
 import { IOAuth } from '../oauth.interface';
 import { InvalidTokenException } from '../../authentication/invalidToken.exception';
 
-@Component()
+@Injectable()
 export class OAuthGoogleService implements IOAuth<IGooglePlusResponse, any> {
 
   private client: any;

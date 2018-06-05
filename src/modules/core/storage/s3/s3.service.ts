@@ -1,10 +1,10 @@
 import { IStorageService } from '../storage.interface';
 import { StorageEntity } from '../storage.entity';
 import { S3 } from 'aws-sdk';
-import { Component, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AWS_S3_PROVIDER } from './s3.constants';
 
-@Component()
+@Injectable()
 export class StorageS3Service implements IStorageService {
 
   private readonly AWS_S3_BUCKET = <string>process.env.AWS_S3_BUCKET;

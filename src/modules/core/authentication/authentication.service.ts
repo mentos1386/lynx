@@ -1,9 +1,9 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { InvalidTokenException } from './invalidToken.exception';
 import { IJWTObject } from './authentication.interface';
 
-@Component()
+@Injectable()
 export class AuthenticationService {
 
   private readonly JWT_SECRET = process.env.JWT_SECRET;

@@ -3,7 +3,7 @@ import { OAuthFacebookService } from './facebook/facebook.service';
 import { OAuthGoogleService } from './google/google.service';
 
 @Module({
-  components: [
+  providers: [
     OAuthFacebookService,
     OAuthGoogleService,
   ],

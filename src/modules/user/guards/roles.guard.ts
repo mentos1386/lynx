@@ -1,35 +1,39 @@
 import {
-  CanActivate, ExecutionContext, ForbiddenException, Guard,
+  CanActivate, ExecutionContext, ForbiddenException, Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { EmailNotVerifiedException } from '../exceptions/emailNotVerified.exception';
 import { UserBlockedException } from '../exceptions/userBlocked.exception';
+import { Observable } from 'rxjs';
 
-@Guard()
+@Injectable()
 export class UserRolesGuard implements CanActivate {
 
   constructor(private readonly reflector: Reflector) {
   }
 
-  async canActivate(req, context: ExecutionContext): Promise<boolean> {
-    let roles = this.reflector.get<string[]>('roles', context.handler);
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    let roles = this.reflector.get<string[]>('roles', context.getHandler());
     if (!roles) {
-      roles = this.reflector.get<string[]>('roles', context.parent);
+      roles = this.reflector.get<string[]>('roles', context.getClass());
       if (!roles) return true;
     }
 
-    const user = req.user;
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
 
     if (!user)
       throw new UnauthorizedException();
 
     // If user is not being impersonated and they do not have verified email
-    if (!req.impersonatedById && !req.user.email)
+    if (!request.impersonatedById && !request.user.email)
       throw new EmailNotVerifiedException();
 
     // If user is not being impersonated and they are blocked
-    if (!req.impersonatedById && req.user.blocked)
+    if (!request.impersonatedById && request.user.blocked)
       throw new UserBlockedException();
 
     if (!user.type || !roles.find(role => role === user.type.toUpperCase())) {

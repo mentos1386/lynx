@@ -1,4 +1,4 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as Ejs from 'ejs';
 import * as path from 'path';
@@ -7,7 +7,7 @@ import { IMailinSendEmailResponse, IMailinData } from './email.interface';
 import 'mailin-api-node-js';
 declare const Mailin;
 
-@Component()
+@Injectable()
 export class EmailService {
 
   private readonly SENDINBLUE_API = 'https://api.sendinblue.com/v2.0';

@@ -1,4 +1,4 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { STORAGE_TYPE } from './storage.constants';
 import { StorageRepository } from './storage.repository';
 import { StorageEntity } from './storage.entity';
@@ -7,7 +7,7 @@ import { StorageDiskService } from './disk/disk.service';
 import { EntityNotFoundException } from '../../../exceptions/entityNotFound.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 
-@Component()
+@Injectable()
 export class StorageService {
 
   constructor(

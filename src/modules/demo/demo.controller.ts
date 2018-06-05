@@ -9,6 +9,7 @@ import { StorageInterceptor } from '../core/storage/storage.interceptor.mixin';
 import { LoggerService } from '../core/logger/logger.service';
 import { UserBlockedException } from '../user/exceptions/userBlocked.exception';
 import { RavenInterceptor } from 'nest-raven';
+import { DiskStorageEngine } from '../core/storage/disk/disk.storage.provider.mixin';
 
 @Controller()
 export class DemoController {
@@ -49,7 +50,7 @@ export class DemoController {
   }
 
   @Post('/upload')
-  @UseInterceptors(StorageInterceptor('file', STORAGE_TYPE.DISK))
+  @UseInterceptors(StorageInterceptor('file', DiskStorageEngine()))
   public async upload(
     @UploadedFile() file: Express.MulterS3.File,
   ) {

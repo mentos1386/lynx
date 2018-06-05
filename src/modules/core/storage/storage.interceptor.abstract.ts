@@ -7,19 +7,15 @@ import { STORAGE_TYPE } from './storage.constants';
 import { STORAGE_DISK_PROVIDER } from './disk/disk.constants';
 import { STORAGE_S3_PROVIDER } from './s3/s3.constants';
 import { extension } from 'mime-types';
+import { StorageEngine } from 'multer';
+import { AbstractStorageEngine } from './storage.engine.abstract';
 
 @Interceptor()
 export abstract class AbstractStorageInterceptor implements NestInterceptor {
 
-  protected abstract readonly storageType: STORAGE_TYPE;
+  protected abstract readonly provider: AbstractStorageEngine;
   protected abstract readonly fieldName: string;
   protected abstract readonly required: boolean;
-
-  constructor(
-    @Inject(STORAGE_S3_PROVIDER) private storageS3Provider: multer.StorageEngine,
-    @Inject(STORAGE_DISK_PROVIDER) private storageDiskProvider: multer.StorageEngine,
-  ) {
-  }
 
   async intercept(
     request: any,
@@ -28,7 +24,7 @@ export abstract class AbstractStorageInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
 
     const upload = multer({
-      storage: this.createStorage(),
+      storage: this.provider.storageEngine,
     });
 
     const fileOrError = await new Promise((resolve, reject) =>
@@ -44,14 +40,5 @@ export abstract class AbstractStorageInterceptor implements NestInterceptor {
     }
 
     return stream$;
-  }
-
-  private createStorage(): multer.StorageEngine {
-    switch (this.storageType) {
-      case STORAGE_TYPE.AWS_S3:
-        return this.storageS3Provider;
-      case STORAGE_TYPE.DISK:
-        return this.storageDiskProvider;
-    }
   }
 }

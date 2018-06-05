@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+    postgres:
+        image: postgres:latest
+
+    api:
+        command: yarn run start
+        build: .
+        ports:
+          - "3000:3000"
+        volumes:
+          - .:/app/src
+          - /app/src/node_modules
+        links:
+          - postgres
+        depends_on:
+          - postgres

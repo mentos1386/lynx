@@ -1,17 +1,16 @@
 import { mixin } from '@nestjs/common';
 import { AbstractStorageInterceptor } from './storage.interceptor.abstract';
 import { STORAGE_TYPE } from './storage.constants';
-import { AbstractStorageEngine } from './storage.engine.abstract';
 
 // tslint:disable-next-line:function-name
 export function StorageInterceptor(
   fieldName: string = 'file',
-  provider?: AbstractStorageEngine,
-  required?: boolean,
+  storageType?: STORAGE_TYPE,
+  required: boolean = true,
 ) {
   return mixin(class extends AbstractStorageInterceptor {
     protected readonly fieldName = fieldName;
-    protected readonly provider = provider;
+    protected readonly storageType = storageType;
     protected readonly required = required;
   });
 }

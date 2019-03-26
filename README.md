@@ -1,6 +1,7 @@
 # Lynx Framework
-> Not yet usable, as is still in active development with major changes
-> happening.
+> **ABANDONED PROJECT** Sadly i don't have enough time to focus on this project. Might return to it sometime in the future.
+
+> For now, it can be taken as a referance, but not an actual framework.
 
 ## Built with
 _**Bold** are required components (not easy to replace)_
